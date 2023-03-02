@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Assinatura Midiadub</title>
+    <style>
+        .inputName, .inputPhone{
+            display: block;
+        }
+
+        /* table,td{
+            border: 0.5px solid red;
+        } */
+        
+    </style>
+</head>
+<body>
+    <!-- 
+        REFS:
+        - https://academind.com/tutorials/build-a-custom-email-signature/
+        - https://medium.com/@robertcooper_rc/creating-slick-email-signatures-using-html-css-9e932758a41e
+     -->
+     
+    <div>
+        <div class="generator">
+            <h3>Gerador de assinatura</h3>
+            <div>Preencha seu nome e celular abaixo:</div>
+            <input class="inputName" type="text" placeholder="Nome Sobrenome" data-target=".midiadub-name">
+            <input class="inputPhone" type="tel" placeholder="+55 11 90000 0000" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" data-target=".midiadub-phone">
+            <button onclick="showResult()">Gerar assinatura</button>
+        </div>
+    </div>
+
+    <div class="result" style="margin-top: 50px;">
+        <h3>Preview</h3>
+        <!-- <img src="./original.png" alt=""> -->
+        <hr>
+        <table class="midiadub-signature" cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td class="midiadub-name" style="font-family: Tahoma; font-size: 14px; line-height: 14px; letter-spacing:0px; font-weight: bold;">Nome Sobrenome</td>
+                </tr>
+                <tr>
+                    <td height="5" style="line-height: 0;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="midiadub-phone" style="font-family: Tahoma; font-size: 13px; line-height: 13px;">+55 00 90000 0000</td>
+                </tr>
+                <tr>
+                    <td height="33" style="line-height: 0;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-family: Tahoma; font-size: 13px; line-height: 13px;">
+                        <a href="https://www.midiadub.com" target="_blank">
+                            <img src="https://i.postimg.cc/jjgj2JBT/logo-site.png" alt="https://www.midiadub.com" width="79" style="display: block;" />
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="1" style="line-height: 0;">&nbsp;</td>
+                </tr>
+            </tbody>
+        
+        </table>
+        <hr style="margin-top:25px;margin-bottom:25px;">
+        <div class="result" >
+            <button onclick="showGenerator()">Editar</button>
+            <button onclick="CopyToClipboard('.midiadub-signature')">Copiar assinatura para o clipboard</button>
+            <div class="success"></div>
+            
+        </div>
+    </div>
+
+    <!-- <div contenteditable="true">
+        
+    </div> -->
+
+    
+    <script src="js/imask.js"></script>
+    
+
+    <script>
+        let generatorEls = document.querySelectorAll(".generator")
+        let resultEls = document.querySelectorAll(".result")
+
+        function CopyToClipboard(selector)
+        {
+            var r = document.createRange();
+            r.selectNode(document.querySelector(selector));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+
+            document.querySelector(".success").innerHTML = "Copiado, só colar lá no Gmail. Noix."
+        }
+
+        function setupInputs()
+        {
+            let inputName = document.querySelector(".inputName")
+            let inputPhone = document.querySelector(".inputPhone")
+
+            IMask(inputPhone, {mask: "+55 00 90000 0000"})
+
+            inputName.addEventListener("input", onInput)
+            inputPhone.addEventListener("input", onInput)
+        }
+
+        function onInput(e)
+        {
+            let input = e.target;
+            let targetSelector = input.getAttribute("data-target")
+            let target = document.querySelector(targetSelector)
+            target.innerHTML = input.value
+        }
+
+        function showGenerator()
+        {
+            generatorEls.forEach((el)=>{el.style.display = "inherit"})
+            resultEls.forEach((el)=>{el.style.display = "none"})
+            document.querySelector(".success").innerHTML = ""
+        }
+
+        function showResult()
+        {
+            generatorEls.forEach((el)=>{el.style.display = "none"})
+            resultEls.forEach((el)=>{el.style.display = "inherit"})
+        }
+
+        function init()
+        {
+            setupInputs()
+            showGenerator();
+            // showResult();
+        }
+
+        init()
+    </script>
+    
+    
+</body>
+</html>

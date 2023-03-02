@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>md-s-v</title>
+
+    <style>
+        html,body{
+            margin:0;
+            padding:0;
+            width:100vw;
+            height:100vh;
+        }
+
+        body{
+            overflow: hidden;
+        }
+
+        .vid
+        {
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            outline :none;
+        }
+
+        .overlay
+        {
+            position: absolute;
+            width:100%;
+            height:100%;
+            top:0;
+            left:0;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 1;
+            transition: opacity 0.5s
+        }
+
+        .playButton
+        {
+            position: absolute;
+            cursor:pointer;
+            width:96px;
+            height:96px;
+            border-radius: 50%;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+        }
+
+    </style>
+</head>
+<body>
+
+
+    <video class="vid" playsinline autoplay muted loop controlsList="nodownload noremoteplayback noaudio" disablePictureInPicture preload="auto"></video>
+
+    <div class="overlay">
+
+        <div class="playButton">
+            <svg preserveAspectRatio="xMidYMid meet" id="comp-klwfvzkssvgcontent" data-bbox="1 1 98 98" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" data-type="ugc" role="img" aria-labelledby="comp-klwfvzks-svgtitle"><title id="comp-klwfvzks-svgtitle"></title>
+                <g>
+                    <path stroke="#cecece" stroke-miterlimit="10" stroke-width="2" d="M99 50c0 27.062-21.938 49-49 49S1 77.062 1 50 22.938 1 50 1s49 21.938 49 49z"></path>
+                    <path fill="#ffffff" d="M67.32 50L41.34 35v30l25.98-15z"></path>
+                </g>
+            </svg>
+        </div>
+
+    </div>
+
+
+    <script type="text/javascript">
+        let vid = document.querySelector(".vid")
+        let overlay = document.querySelector(".overlay")
+        let playButton = document.querySelector(".playButton")
+
+        // TODO: mouse over do botão play
+
+        function iOS() {
+            return [
+                'iPad Simulator',
+                'iPhone Simulator',
+                'iPod Simulator',
+                'iPad',
+                'iPhone',
+                'iPod'
+            ].includes(navigator.platform)
+            // iPad on iOS 13 detection
+            || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+        }
+
+        function initOverlayDesktop()
+        {
+            overlay.style.opacity = 0;
+
+            overlay.addEventListener("mouseenter", ()=>{
+                overlay.style.opacity = 1;
+            })
+
+            
+            overlay.addEventListener("mouseleave", ()=>{
+                overlay.style.opacity = 0;
+                
+            })
+        }
+
+
+        function init()
+        {
+            //console.log("document ready, location: ", window.location)
+            const queryString = window.location.search
+            const urlParams = new URLSearchParams(queryString)
+
+            let vidUrl = urlParams.get("v")
+            let isMobile = urlParams.get("m") == "1"
+            //console.log("vidUrl: ", vidUrl)
+            // console.log("isMobile: ", isMobile)
+            
+            if(vidUrl && vidUrl != "")
+            {
+                vidUrl = decodeURIComponent(vidUrl)
+                vid.src = vidUrl;
+            }else
+            {
+                vid.style.display = "none"
+            }
+
+            if(!isMobile)
+                initOverlayDesktop();
+
+            document.onfullscreenchange = ()=> {
+                if (document.fullscreenElement == null)
+                {
+                    playButton.style.display = 'inherit'
+                    overlay.style.display = 'inherit'
+                    vid.controls = false
+                    vid.muted = true
+                    vid.loop = true
+                }
+            }
+
+            playButton.addEventListener("click", ()=>{
+                if(!iOS())
+                    vid.requestFullscreen()
+                
+                playButton.style.display = 'none'
+                overlay.style.display = 'none'
+                vid.play()
+                vid.controls = true
+                vid.muted = false
+                vid.loop = false
+            })
+        }
+
+        document.addEventListener("DOMContentLoaded", init)
+       
+
+    </script>
+    
+</body>
+</html>
+
